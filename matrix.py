@@ -1,8 +1,9 @@
-#TODO: Make custom exceptions
-#TODO: You shouldn't be able to delete a single element from a row, only full rows and columns
+# TODO: Make custom exceptions
+# TODO: You shouldn't be able to delete a single element from a row, only full rows and columns
 
 from random import randint
 from copy import deepcopy
+
 
 class Matrix(object):
 
@@ -12,11 +13,11 @@ class Matrix(object):
         self.matrix = []
 
         for i in range(rows):
-            self.matrix.append([]) # Initialize empty rows
+            self.matrix.append([])  # Initialize empty rows
 
         for row in self.matrix:
             for i in range(columns):
-                row.append(0) # Fill the rows with 0s
+                row.append(0)  # Fill the rows with 0s
 
     def __repr__(self):
         '''Print the matrix row after row.'''
@@ -33,7 +34,8 @@ class Matrix(object):
         if isinstance(value, list):
             self.matrix[key] = value
         else:
-            raise TypeError("A matrix object can only contain lists of numbers")
+            raise TypeError(
+                "A matrix object can only contain lists of numbers")
         return
 
     def __delitem__(self, key):
@@ -53,9 +55,9 @@ class Matrix(object):
     def __eq__(self, otherMatrix):
         if isinstance(otherMatrix, Matrix):
             if (self.rows != otherMatrix.rows) or (self.columns != otherMatrix.columns):
-                return False # They don't have the same dimensions, they can't be equal
+                return False  # They don't have the same dimensions, they can't be equal
 
-            for row in range(self.rows): # Check the elements one by one
+            for row in range(self.rows):  # Check the elements one by one
                 for column in range(self.columns):
                     if self.matrix[row][column] != otherMatrix[row][column]:
                         return False
@@ -65,7 +67,8 @@ class Matrix(object):
             return False
 
     def __ne__(self, otherMatrix):
-        return not self.__eq__(otherMatrix) # Check for equality and reverse the result
+        # Check for equality and reverse the result
+        return not self.__eq__(otherMatrix)
 
     def __add__(self, otherMatrix):
         '''Add 2 matrices of the same type.'''
@@ -97,7 +100,8 @@ class Matrix(object):
                         '''
                         new_element = 0
                         for column_self in range(self.columns):
-                            new_element += (self[row_self][column_self] * transposeMatrix[row_transpose][column_self])
+                            new_element += (self[row_self][column_self] *
+                                            transposeMatrix[row_transpose][column_self])
 
                         newMatrix[row_self][row_transpose] = new_element
 
@@ -109,7 +113,8 @@ class Matrix(object):
                     (self.rows, self.columns, secondTerm.rows, secondTerm.columns)
                 )
         else:
-            raise TypeError("Can't multiply a matrix by non-int of type " + type(secondTerm).__name__)
+            raise TypeError(
+                "Can't multiply a matrix by non-int of type " + type(secondTerm).__name__)
 
     def __rmul__(self, secondTerm):
         return self.__mul__(secondTerm)
@@ -138,9 +143,11 @@ class Matrix(object):
                 for row in range(self.rows):
                     for column in range(self.columns):
                         if operation == "add":
-                            newMatrix[row][column] = self[row][column] + secondTerm[row][column]
+                            newMatrix[row][column] = self[row][column] + \
+                                secondTerm[row][column]
                         elif operation == "sub":
-                            newMatrix[row][column] = self[row][column] - secondTerm[row][column]
+                            newMatrix[row][column] = self[row][column] - \
+                                secondTerm[row][column]
                         else:
                             raise Exception("Invalid operation type")
             else:
@@ -149,7 +156,8 @@ class Matrix(object):
                     (self.rows, self.columns, secondTerm.rows, secondTerm.columns)
                 )
         else:
-            raise TypeError("Can only add or subtract a matrix with another matrix or a number")
+            raise TypeError(
+                "Can only add or subtract a matrix with another matrix or a number")
 
         return newMatrix
 
@@ -161,7 +169,8 @@ class Matrix(object):
 
         for row in range(self.rows):
             for column in range(self.columns):
-                newMatrix[column][row] = self.matrix[row][column] # a(i,j) = a(j,i)
+                # a(i,j) = a(j,i)
+                newMatrix[column][row] = self.matrix[row][column]
 
         return newMatrix
 
@@ -175,3 +184,51 @@ class Matrix(object):
         newMatrix.columns -= 1
 
         return newMatrix
+
+
+def algebric_complement(self, row, column):
+        complementMatrix = self.complement_matrix(row, column)
+        algebricComplement = (-1)**(row+column) * \
+                              complementMatrix.determinant()
+
+        return algebricComplement
+
+    def determinant(self):
+        '''
+        Return the determinant.
+
+        This function uses Laplace's theorem to calculate the determinant.
+        It is a very rough implementation, which means it becomes slower and
+        slower as the size of the matrix grows.
+        '''
+        if self.is_square():
+            if self.rows == 1:
+                # If it's a square matrix with only 1 row, it has only 1 element
+                det = self[0][0] # The determinant is equal to the element
+            elif self.rows == 2:
+                det = (self[0][0] * self[1][1]) - (self[0][1] * self[1][0])
+            else:
+                # We calculate the determinant using Laplace's theorem
+                det = 0
+                for element in range(self.columns):
+                    det += self[0][element] * self.algebric_complement(0, element)
+            return det
+        else:
+            raise TypeError("Can only calculate the determinant of a square matrix")
+
+    def algebric_complements_matrix(self):
+        '''Return the matrix of all algebric complements.'''
+        if self.is_square():
+            newMatrix = Matrix(self.rows, self.columns)
+            for row in range(self.rows):
+                for column in range(self.columns):
+                    newMatrix[row][column] = self.algebric_complement(row, column)
+            return newMatrix
+        else:
+            raise TypeError("Algebric complements can only be calculated on a square matrix")
+
+    def random(self, lower=-5, upper=5):
+        '''Fill the matrix with random numbers (integers).'''
+        for row in self.matrix:
+            for i in range(self.columns):
+                row[i] = randint(lower, upper)
