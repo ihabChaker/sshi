@@ -186,6 +186,7 @@ class Matrix(object):
         return newMatrix
 
 
+<<<<<<< HEAD
 def inverse_matrix(self):
         '''Return the inverse matrix.'''
         det = self.determinant()
@@ -208,3 +209,51 @@ def inverse_matrix(self):
         newMatrix = 1/2 * (self - self.transpose())
 
         return newMatrix
+=======
+def algebric_complement(self, row, column):
+        complementMatrix = self.complement_matrix(row, column)
+        algebricComplement = (-1)**(row+column) * \
+                              complementMatrix.determinant()
+
+        return algebricComplement
+
+    def determinant(self):
+        '''
+        Return the determinant.
+
+        This function uses Laplace's theorem to calculate the determinant.
+        It is a very rough implementation, which means it becomes slower and
+        slower as the size of the matrix grows.
+        '''
+        if self.is_square():
+            if self.rows == 1:
+                # If it's a square matrix with only 1 row, it has only 1 element
+                det = self[0][0] # The determinant is equal to the element
+            elif self.rows == 2:
+                det = (self[0][0] * self[1][1]) - (self[0][1] * self[1][0])
+            else:
+                # We calculate the determinant using Laplace's theorem
+                det = 0
+                for element in range(self.columns):
+                    det += self[0][element] * self.algebric_complement(0, element)
+            return det
+        else:
+            raise TypeError("Can only calculate the determinant of a square matrix")
+
+    def algebric_complements_matrix(self):
+        '''Return the matrix of all algebric complements.'''
+        if self.is_square():
+            newMatrix = Matrix(self.rows, self.columns)
+            for row in range(self.rows):
+                for column in range(self.columns):
+                    newMatrix[row][column] = self.algebric_complement(row, column)
+            return newMatrix
+        else:
+            raise TypeError("Algebric complements can only be calculated on a square matrix")
+
+    def random(self, lower=-5, upper=5):
+        '''Fill the matrix with random numbers (integers).'''
+        for row in self.matrix:
+            for i in range(self.columns):
+                row[i] = randint(lower, upper)
+>>>>>>> complement
