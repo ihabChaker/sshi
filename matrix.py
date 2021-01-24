@@ -1,8 +1,9 @@
-#TODO: Make custom exceptions
-#TODO: You shouldn't be able to delete a single element from a row, only full rows and columns
+# TODO: Make custom exceptions
+# TODO: You shouldn't be able to delete a single element from a row, only full rows and columns
 
 from random import randint
 from copy import deepcopy
+
 
 class Matrix(object):
 
@@ -12,11 +13,11 @@ class Matrix(object):
         self.matrix = []
 
         for i in range(rows):
-            self.matrix.append([]) # Initialize empty rows
+            self.matrix.append([])  # Initialize empty rows
 
         for row in self.matrix:
             for i in range(columns):
-                row.append(0) # Fill the rows with 0s
+                row.append(0)  # Fill the rows with 0s
 
     def __repr__(self):
         '''Print the matrix row after row.'''
@@ -33,7 +34,8 @@ class Matrix(object):
         if isinstance(value, list):
             self.matrix[key] = value
         else:
-            raise TypeError("A matrix object can only contain lists of numbers")
+            raise TypeError(
+                "A matrix object can only contain lists of numbers")
         return
 
     def __delitem__(self, key):
@@ -53,9 +55,9 @@ class Matrix(object):
     def __eq__(self, otherMatrix):
         if isinstance(otherMatrix, Matrix):
             if (self.rows != otherMatrix.rows) or (self.columns != otherMatrix.columns):
-                return False # They don't have the same dimensions, they can't be equal
+                return False  # They don't have the same dimensions, they can't be equal
 
-            for row in range(self.rows): # Check the elements one by one
+            for row in range(self.rows):  # Check the elements one by one
                 for column in range(self.columns):
                     if self.matrix[row][column] != otherMatrix[row][column]:
                         return False
@@ -65,7 +67,8 @@ class Matrix(object):
             return False
 
     def __ne__(self, otherMatrix):
-        return not self.__eq__(otherMatrix) # Check for equality and reverse the result
+        # Check for equality and reverse the result
+        return not self.__eq__(otherMatrix)
 
     def __add__(self, otherMatrix):
         '''Add 2 matrices of the same type.'''
@@ -97,7 +100,8 @@ class Matrix(object):
                         '''
                         new_element = 0
                         for column_self in range(self.columns):
-                            new_element += (self[row_self][column_self] * transposeMatrix[row_transpose][column_self])
+                            new_element += (self[row_self][column_self] *
+                                            transposeMatrix[row_transpose][column_self])
 
                         newMatrix[row_self][row_transpose] = new_element
 
@@ -109,7 +113,8 @@ class Matrix(object):
                     (self.rows, self.columns, secondTerm.rows, secondTerm.columns)
                 )
         else:
-            raise TypeError("Can't multiply a matrix by non-int of type " + type(secondTerm).__name__)
+            raise TypeError(
+                "Can't multiply a matrix by non-int of type " + type(secondTerm).__name__)
 
     def __rmul__(self, secondTerm):
         return self.__mul__(secondTerm)
@@ -138,9 +143,11 @@ class Matrix(object):
                 for row in range(self.rows):
                     for column in range(self.columns):
                         if operation == "add":
-                            newMatrix[row][column] = self[row][column] + secondTerm[row][column]
+                            newMatrix[row][column] = self[row][column] + \
+                                secondTerm[row][column]
                         elif operation == "sub":
-                            newMatrix[row][column] = self[row][column] - secondTerm[row][column]
+                            newMatrix[row][column] = self[row][column] - \
+                                secondTerm[row][column]
                         else:
                             raise Exception("Invalid operation type")
             else:
@@ -149,7 +156,8 @@ class Matrix(object):
                     (self.rows, self.columns, secondTerm.rows, secondTerm.columns)
                 )
         else:
-            raise TypeError("Can only add or subtract a matrix with another matrix or a number")
+            raise TypeError(
+                "Can only add or subtract a matrix with another matrix or a number")
 
         return newMatrix
 
@@ -161,7 +169,8 @@ class Matrix(object):
 
         for row in range(self.rows):
             for column in range(self.columns):
-                newMatrix[column][row] = self.matrix[row][column] # a(i,j) = a(j,i)
+                # a(i,j) = a(j,i)
+                newMatrix[column][row] = self.matrix[row][column]
 
         return newMatrix
 
@@ -173,5 +182,29 @@ class Matrix(object):
             del(newMatrix[row][columnToDelete])
 
         newMatrix.columns -= 1
+
+        return newMatrix
+
+
+def inverse_matrix(self):
+        '''Return the inverse matrix.'''
+        det = self.determinant()
+        if det == 0:
+            raise Exception("Matrix not invertible")
+        else:
+            algebricComplementsMatrix = self.algebric_complements_matrix()
+            inverseMatrix = 1/det * algebricComplementsMatrix.transpose()
+
+            return inverseMatrix
+
+ def symmetric_part(self):
+        '''Return the symmetric part of the matrix.'''
+        newMatrix = 1/2 * (self + self.transpose())
+
+        return newMatrix
+
+ def antisymmetric_part(self):
+        '''Return the antisymmetric part of the matrix.'''
+        newMatrix = 1/2 * (self - self.transpose())
 
         return newMatrix
